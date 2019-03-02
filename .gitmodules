@@ -1,0 +1,3 @@
+[submodule "aribb24"]
+	path = aribb24
+	url = https://github.com/nkoriyama/aribb24.git
