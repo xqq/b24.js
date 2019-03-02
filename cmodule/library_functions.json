@@ -1,0 +1,11 @@
+[
+    "object_create_id",
+    "object_set_field_int",
+    "object_set_field_double",
+    "object_set_field_string",
+    "object_set_field_array",
+    "array_create_id",
+    "array_push_object",
+    "get_object_from_id",
+    "revoke_ids"
+]

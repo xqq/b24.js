@@ -1,0 +1,14 @@
+[
+    "_b24decoder_alloc",
+    "_b24decoder_free",
+    "_b24decoder_decode_pes",
+    "_object_create_id",
+    "_object_set_field_int",
+    "_object_set_field_double",
+    "_object_set_field_string",
+    "_object_set_field_array",
+    "_array_create_id",
+    "_array_push_object",
+    "_get_object_from_id",
+    "_revoke_ids"
+]
