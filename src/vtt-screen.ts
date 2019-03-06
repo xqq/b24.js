@@ -75,7 +75,9 @@ export default class VTTScreen {
             this._guessDuration = Math.round(text.length / 3) * 1000;
         }
 
-        let cue = new VTTCue(this.startTime / 1000, this.endTime / 1000, text);
+        let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
+        let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, text) as VTTCue;
+
         cue.id = subtitle.hashCode().toString();
         cue.snapToLines = false;
         cue.lineAlign = 'start';
