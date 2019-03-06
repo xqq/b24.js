@@ -1,14 +1,17 @@
-import { AribSubtitle } from './arib-subtitle';
+import { AribSubtitle, AribSubtitleRegion } from './arib-subtitle';
+import { StyleManager } from './style-manager';
 
 export default class VTTScreen {
 
     private subtitle: AribSubtitle;
+    private styleManager: StyleManager;
     private _undetermined: boolean;
     private _guessDuration: number;
     private _cues: VTTCue[];
 
-    public constructor(aribSubtitle: AribSubtitle) {
+    public constructor(aribSubtitle: AribSubtitle, styleManager: StyleManager) {
         this.subtitle = aribSubtitle;
+        this.styleManager = styleManager;
         this._undetermined = (this.subtitle.duration === 0);
         this._guessDuration = 0;
         this._cues = [];
@@ -16,6 +19,7 @@ export default class VTTScreen {
 
     public dispose(): void {
         this.subtitle = null;
+        this.styleManager = null;
         this._cues.length = 0;
     }
 
@@ -69,6 +73,7 @@ export default class VTTScreen {
     public render(): VTTCue[] {
         let subtitle = this.subtitle;
         let text = subtitle.rubylessText();  // Remove Furiganas
+        let id = subtitle.hashCode().toString();
 
         if (this._undetermined) {
             // fill in a guessed duration for undetermined subtitle
@@ -76,12 +81,16 @@ export default class VTTScreen {
         }
 
         let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
-        let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, text) as VTTCue;
 
-        cue.id = subtitle.hashCode().toString();
-        cue.snapToLines = false;
+        let colorTag = this.styleManager.applyColor(subtitle.regions[0].fontColor);
+        let cueText = `<${colorTag}>${text}</v>`;
+
+        let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, cueText) as VTTCue;
+
+        cue.id = id;
+        cue.snapToLines = true;
         cue.lineAlign = 'start';
-        cue.line = 75;
+        cue.line = 8;
         cue.position = 'auto';
         cue.positionAlign = 'center';
 

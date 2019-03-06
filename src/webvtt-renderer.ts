@@ -1,6 +1,7 @@
 import B24Decoder from './b24-decoder';
 import VTTScreen from './vtt-screen';
 import { AribSubtitle } from './arib-subtitle';
+import { StyleManager } from './style-manager';
 
 export default class WebVTTRenderer {
 
@@ -8,10 +9,12 @@ export default class WebVTTRenderer {
     private media: HTMLMediaElement;
     private track: TextTrack;
     private screens: VTTScreen[];
+    private styleManager: StyleManager;
 
     public constructor() {
         this.decoder = new B24Decoder();
         this.screens = [];
+        this.styleManager = new StyleManager();
     }
 
     public async init(): Promise<void> {
@@ -35,11 +38,13 @@ export default class WebVTTRenderer {
         }
 
         this.track = track;
+        this.styleManager.init();
     }
 
     public detachMedia(): void {
         this.cleanupTrack();
         this.cleanupScreens();
+        this.styleManager.dispose();
         // There is no way to destroy a TextTrack, unless destroy the HTMLMediaElement
         this.track = null;
         this.media = null;
@@ -122,7 +127,7 @@ export default class WebVTTRenderer {
     }
 
     private convertAndAppendSubtitle(subtitle: AribSubtitle): void {
-        let screen = new VTTScreen(subtitle);
+        let screen = new VTTScreen(subtitle, this.styleManager);
         let cues: VTTCue[] = screen.render();
 
         for (let cue of cues) {
