@@ -8,12 +8,10 @@ export default class WebVTTRenderer {
     private media: HTMLMediaElement;
     private track: TextTrack;
     private screens: VTTScreen[];
-    // private timeRanges: {start: number; end: number}[];
 
     public constructor() {
         this.decoder = new B24Decoder();
         this.screens = [];
-        // this.timeRanges = [];
     }
 
     public async init(): Promise<void> {

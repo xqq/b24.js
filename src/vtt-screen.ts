@@ -68,13 +68,12 @@ export default class VTTScreen {
 
     public render(): VTTCue[] {
         let subtitle = this.subtitle;
+        let text = subtitle.rubylessText();  // Remove Furiganas
 
         if (this._undetermined) {
             // fill in a guessed duration for undetermined subtitle
-            this._guessDuration = Math.round(subtitle.text.length / 3) * 1000;
+            this._guessDuration = Math.round(text.length / 3) * 1000;
         }
-
-        let text = subtitle.text;
 
         let cue = new VTTCue(this.startTime / 1000, this.endTime / 1000, text);
         cue.id = subtitle.hashCode().toString();
