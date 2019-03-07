@@ -1,4 +1,3 @@
-const wasm = require('../build/b24js-cmodule.wasm');
 import cmodule from '../build/b24js-cmodule';
 import { AribSubtitle } from './arib-subtitle';
 import { setPrototypeOf } from './utils';

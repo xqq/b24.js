@@ -79,21 +79,64 @@ export default class VTTScreen {
 
         let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
 
-        let colorTag = styleManager.applyColor(subtitle.regions[0].fontColor);
-        let cueText = `<${colorTag}>${text}</v>`;
+        let line = 10;
+        let orderedRegions = this.rearrangeRegions(subtitle);
 
-        let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, cueText) as VTTCue;
+        for (let regionLine of orderedRegions) {
+            let cueText = '';
 
-        cue.id = id;
-        cue.snapToLines = true;
-        cue.lineAlign = 'start';
-        cue.line = 8;
-        cue.position = 'auto';
-        cue.positionAlign = 'center';
+            for (let region of regionLine) {
+                // merge regions on a same line into single cue with color tag
+                let colorTag = styleManager.applyColor(region.fontColor);
+                cueText += `<${colorTag}>${region.text}</v>`;
+            }
 
-        this._cues.push(cue);
+            let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, cueText) as VTTCue;
+
+            cue.id = id;
+            cue.snapToLines = true;
+            cue.lineAlign = 'start';
+            cue.line = line++;
+            cue.position = 'auto';
+            cue.positionAlign = 'center';
+
+            this._cues.push(cue);
+        }
 
         return this._cues;
+    }
+
+    private rearrangeRegions(subtitle: AribSubtitle): AribSubtitleRegion[][] {
+        let map: Map<number, AribSubtitleRegion[]> = new Map();
+
+        for (let region of subtitle.regions) {
+            if (region.fontHeight === 18 && region.fontWidth === 18) {
+                // Ignore Furigana
+                continue;
+            }
+
+            let regionArray = map.get(region.charBottom);
+            if (regionArray) {
+                regionArray.push(region);
+            } else {
+                map.set(region.charBottom, [region]);
+            }
+        }
+
+        let newRegions: AribSubtitleRegion[][] = [];
+
+        map.forEach((regions: AribSubtitleRegion[], charBottom: number) => {
+            regions.sort((a: AribSubtitleRegion, b: AribSubtitleRegion): number => {
+                return a.charLeft - b.charLeft;
+            });
+            newRegions.push(regions);
+        });
+
+        newRegions.sort((a: AribSubtitleRegion[], b: AribSubtitleRegion[]): number => {
+            return a[0].charBottom - b[0].charBottom;
+        });
+
+        return newRegions;
     }
 
 }
