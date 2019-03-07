@@ -127,8 +127,8 @@ export default class WebVTTRenderer {
     }
 
     private convertAndAppendSubtitle(subtitle: AribSubtitle): void {
-        let screen = new VTTScreen(subtitle, this.styleManager);
-        let cues: VTTCue[] = screen.render();
+        let screen = new VTTScreen(subtitle);
+        let cues: VTTCue[] = screen.render(this.styleManager);
 
         for (let cue of cues) {
             this.track.addCue(cue);
