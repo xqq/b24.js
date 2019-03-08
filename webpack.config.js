@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'development',
     entry: './src/index.ts',
     output: {
         filename: 'b24.js',
