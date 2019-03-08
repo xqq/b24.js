@@ -1,7 +1,9 @@
 #ifndef _B24JS_OBJECT_HELPER
 #define _B24JS_OBJECT_HELPER
 
+#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

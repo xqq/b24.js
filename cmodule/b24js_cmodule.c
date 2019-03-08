@@ -1,14 +1,21 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <aribb24/aribb24.h>
 #include <aribb24/parser.h>
 #include <aribb24/decoder.h>
-#include <emscripten.h>
 #include "b24js_cmodule.h"
 #include "object_helper.h"
 
 static void aribb24_message_callback(void* opaque, const char* message) {
+#if defined(__EMSCRIPTEN__)
     emscripten_log(EM_LOG_WARN, "%s\n", message);
+#else
+    printf("%s\n", message);
+#endif
 }
 
 B24Decoder* b24decoder_alloc() {
