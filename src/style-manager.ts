@@ -15,11 +15,11 @@ export class StyleManager {
 
         this.cueStyle = document.createTextNode(`
             video::cue {
-                background-color: rgba(0, 0, 0, 0.6);
+                background-color: rgba(0, 0, 0, 0.5);
             }
 
             video::-webkit-media-text-track-display-backdrop {
-                background-color: rgba(0, 0, 0, 0.6) !important;
+                background-color: rgba(0, 0, 0, 0.5) !important;
             }
         `);
 
