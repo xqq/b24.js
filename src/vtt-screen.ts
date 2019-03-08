@@ -79,7 +79,7 @@ export default class VTTScreen {
 
         let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
 
-        let line = 10;
+        let line = 9;
         let orderedRegions = this.rearrangeRegions(subtitle);
 
         for (let regionLine of orderedRegions) {

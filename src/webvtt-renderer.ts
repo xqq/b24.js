@@ -116,13 +116,12 @@ export default class WebVTTRenderer {
             prevScreen = this.screens[this.screens.length - 1];
         }
 
-        if (prevScreen && prevScreen.undetermined && prevScreen.isAlive(subtitle.pts)) {
-            // update duration of previous undetermined subtitle to the actual value
+        if (prevScreen && prevScreen.isAlive(subtitle.pts)) {
+            // update duration of previous subtitle to avoid overlap -> (new.startTime - prev.startTime)
             let duration = subtitle.pts - prevScreen.startTime;
             prevScreen.duration = duration;
         }
 
-        // TODO: determine overlap
         this.convertAndAppendSubtitle(subtitle);
     }
 
