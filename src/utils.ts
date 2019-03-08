@@ -20,3 +20,7 @@ export function BKDRHash(str: string): number {
 
     return hash;
 }
+
+export function isFireFox(): boolean {
+    return /firefox|Firefox/.test(navigator.userAgent);
+}
