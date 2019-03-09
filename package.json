@@ -1,11 +1,9 @@
 {
   "name": "b24.js",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "HTML5 subtitle renderer for ARIB B24",
   "main": "./dist/b24.js",
   "types": "./dist/index.d.ts",
-  "module": "./src/index.ts",
-  "jsnext:main": "./src/index.ts",
   "keywords": [
     "html5",
     "arib",
@@ -21,7 +19,7 @@
     "build": "webpack --mode=production --progress --verbose"
   },
   "author": "xqq <xqq@xqq.im>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^10.12.18",
