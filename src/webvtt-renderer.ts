@@ -2,31 +2,47 @@ import B24Decoder from './b24-decoder';
 import VTTScreen from './vtt-screen';
 import { AribSubtitle } from './arib-subtitle';
 import { StyleManager } from './style-manager';
+import { InitializeEvent, isInitialized } from './cmodule-initializer';
 
 export default class WebVTTRenderer {
 
-    private decoder: B24Decoder;
+    private decoders: Record<number, B24Decoder>;
     private media: HTMLMediaElement;
     private track: TextTrack;
     private screens: VTTScreen[];
     private styleManager: StyleManager;
 
     public constructor() {
-        this.decoder = new B24Decoder();
+        this.decoders = {};
         this.screens = [];
         this.styleManager = new StyleManager();
     }
 
     public async init(): Promise<void> {
-        return await this.decoder.init();
+        if (isInitialized) {
+            return;
+        }
+
+        return new Promise<void>(resolve => {
+            InitializeEvent.once(() => {
+                resolve();
+            });
+        });
     }
 
     public dispose(): void {
         if (this.media) {
             this.detachMedia();
         }
-        this.decoder.dispose();
-        this.decoder = null;
+        // cleanup decoders
+        for (let pid in this.decoders) {
+            if (this.decoders.hasOwnProperty(pid)) {
+                let decoder = this.decoders[pid];
+                decoder.dispose();
+                delete this.decoders[pid];
+            }
+        }
+        this.decoders = null;
     }
 
     public attachMedia(media: HTMLMediaElement): void {
@@ -91,14 +107,19 @@ export default class WebVTTRenderer {
         this.track.mode = 'hidden';
     }
 
-    public pushData(uint8array: Uint8Array, pts: number): void {
-        let subtitle = this.decoder.decode(uint8array, pts);
+    public pushData(pid: number, uint8array: Uint8Array, pts: number): void {
+        let decoder = this.decoders[pid];
+        if (decoder == undefined) {
+            console.warn(`[WebVTTRenderer] > Create new decoder for pid: ${pid}`);
+            decoder = this.decoders[pid] = new B24Decoder();
+        }
+
+        let subtitle = decoder.decode(uint8array, pts);
         if (subtitle == null) {
             return;
         }
 
         console.warn(`[${pts}] > ${subtitle.text}`);
-        console.warn(subtitle);
 
         if (this.track.mode === 'disabled') {
             // otherwise track.cues will be null
