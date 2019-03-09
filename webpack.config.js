@@ -1,4 +1,5 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     entry: './src/index.ts',
@@ -20,7 +21,16 @@ module.exports = {
         'path': 'empty'
     },
 
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                exclude: /b24js-cmodule/
+            })
+        ]
+    },
+
     module: {
+        noParse: /b24js-cmodule/,
         rules: [
             {
                 test: /\.tsx?$/,

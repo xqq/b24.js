@@ -1,7 +1,8 @@
 import { AribSubtitle } from './arib-subtitle';
 import { setPrototypeOf } from './utils';
 import { InitializeEvent, isInitialized } from './cmodule-initializer';
-import cmodule from '../build/b24js-cmodule';
+// @ts-ignore
+import * as cmodule from '../build/b24js-cmodule';
 
 export default class B24Decoder {
 

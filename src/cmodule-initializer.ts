@@ -1,5 +1,6 @@
 // const wasm = require('../build/b24js-cmodule.wasm');
-import cmodule from '../build/b24js-cmodule';
+// @ts-ignore
+import * as cmodule from '../build/b24js-cmodule';
 import FlagEvent from './flag-event';
 
 export let InitializeEvent = new FlagEvent();
