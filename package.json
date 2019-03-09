@@ -2,28 +2,40 @@
   "name": "b24.js",
   "version": "1.0.0",
   "description": "HTML5 subtitle renderer for ARIB B24",
-  "main": "index.js",
+  "main": "./dist/b24.js",
+  "types": "./dist/index.d.ts",
+  "module": "./src/index.ts",
+  "jsnext:main": "./src/index.ts",
+  "keywords": [
+    "html5",
+    "arib",
+    "b24",
+    "subtitle"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xqq/b24.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "watch": "webpack --mode=development --progress --verbose --watch",
+    "build": "webpack --mode=production --progress --verbose"
   },
   "author": "xqq <xqq@xqq.im>",
   "license": "ISC",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^10.12.18",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.4.2",
-    "@types/node": "^10.12.18",
     "browser-sync": "^2.26.3",
     "eslint": "^5.15.0",
+    "exports-loader": "^0.7.0",
+    "file-loader": "^3.0.1",
+    "source-map-loader": "^0.2.4",
+    "terser-webpack-plugin": "^1.2.3",
+    "ts-loader": "^5.3.2",
     "typescript": "^3.2.2",
     "webpack": "^4.28.3",
-    "webpack-cli": "^3.1.2",
-    "ts-loader": "^5.3.2",
-    "file-loader": "^3.0.1",
-    "exports-loader": "^0.7.0",
-    "source-map-loader": "^0.2.4"
+    "webpack-cli": "^3.1.2"
   }
 }

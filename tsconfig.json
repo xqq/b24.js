@@ -6,6 +6,7 @@
         "module": "es6",
         "target": "es5",
         "experimentalDecorators": true,
+        "declaration": true,
         "lib": ["dom", "es5", "es2015.promise", "es2015.collection"]
     },
     "include": [
