@@ -3,7 +3,7 @@
   "version": "0.9.0",
   "description": "HTML5 subtitle renderer for ARIB B24",
   "main": "./dist/b24.js",
-  "types": "./dist/index.d.ts",
+  "types": "./d.ts/index.d.ts",
   "keywords": [
     "html5",
     "arib",
