@@ -1,10 +1,12 @@
-### Project Specific ###
+## Modified from .gitignore from same folder
+
+aribb24/
 build/
-d.ts/
-dist/
+demo/
+docs/
+screenshots/
 .cquery
 .ccls
-###
 
 #################
 ## Node.js
@@ -21,7 +23,6 @@ npm-debug.log
 _SpecRunner.html
 reports
 jsdoc
-dist
 build/temp
 coverage/
 
