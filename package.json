@@ -1,6 +1,6 @@
 {
   "name": "b24.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "HTML5 subtitle renderer for ARIB B24",
   "main": "./dist/b24.js",
   "types": "./d.ts/index.d.ts",
