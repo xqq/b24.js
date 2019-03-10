@@ -110,7 +110,6 @@ export default class WebVTTRenderer {
     public pushData(pid: number, uint8array: Uint8Array, pts: number): void {
         let decoder = this.decoders[pid];
         if (decoder == undefined) {
-            console.warn(`[WebVTTRenderer] > Create new decoder for pid: ${pid}`);
             decoder = this.decoders[pid] = new B24Decoder();
         }
 
@@ -118,8 +117,6 @@ export default class WebVTTRenderer {
         if (subtitle == null) {
             return;
         }
-
-        console.warn(`[${pts}] > ${subtitle.text}`);
 
         if (this.track.mode === 'disabled') {
             // otherwise track.cues will be null
