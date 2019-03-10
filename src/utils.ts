@@ -24,3 +24,11 @@ export function BKDRHash(str: string): number {
 export function isFireFox(): boolean {
     return /firefox|Firefox/.test(navigator.userAgent);
 }
+
+export function isChrome(): boolean {
+    return /chrome|Chrome/.test(navigator.userAgent);
+}
+
+export function isSafari(): boolean {
+    return /safari|Safari/.test(navigator.userAgent) && !isChrome();
+}

@@ -1,6 +1,6 @@
 import { AribSubtitle, AribSubtitleRegion } from './arib-subtitle';
 import { StyleManager } from './style-manager';
-import { isFireFox } from './utils';
+import { isFireFox, isSafari } from './utils';
 
 export default class VTTScreen {
 
@@ -8,14 +8,12 @@ export default class VTTScreen {
     private _undetermined: boolean;
     private _guessDuration: number;
     private _cues: VTTCue[];
-    private _isFireFox: boolean;
 
     public constructor(aribSubtitle: AribSubtitle) {
         this.subtitle = aribSubtitle;
         this._undetermined = (this.subtitle.duration === 0);
         this._guessDuration = 0;
         this._cues = [];
-        this._isFireFox = isFireFox();
     }
 
     public dispose(): void {
@@ -82,7 +80,13 @@ export default class VTTScreen {
 
         let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
 
-        let line = this._isFireFox ? 10 : 9;
+        let line = 9;
+        if (isFireFox()) {
+            line = 10;
+        } else if (isSafari()) {
+            line = 11;
+        }
+
         let orderedRegions = this.rearrangeRegions(subtitle);
 
         for (let regionLine of orderedRegions) {
