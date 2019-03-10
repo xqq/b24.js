@@ -100,7 +100,6 @@ export default class VTTScreen {
             cue.snapToLines = true;
             cue.lineAlign = 'start';
             cue.line = line++;
-            cue.position = 'auto';
             cue.positionAlign = 'center';
 
             this._cues.push(cue);
