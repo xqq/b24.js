@@ -4,6 +4,7 @@ d.ts/
 dist/
 .cquery
 .ccls
+.ccls-cache/
 ###
 
 #################
