@@ -87,8 +87,10 @@ export default class WebVTTRenderer {
     private cleanupTrack(): void {
         let track = this.track;
         if (track && track.cues) {
-            while (track.cues.length > 0) {
-                track.removeCue(track.cues[0]);
+            let cues = track.cues;
+
+            for (let i = cues.length - 1; i >= 0; i--) {
+                track.removeCue(cues[i]);
             }
         }
     }
