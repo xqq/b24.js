@@ -21,6 +21,19 @@ export function BKDRHash(str: string): number {
     return hash;
 }
 
+export function escapeHTML(unsafe: string): string {
+    let tags: {[key: string]: string} = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#039;'
+    };
+    return unsafe.replace(/[&<>"']/g, (char: string): string => {
+        return tags[char] || char;
+    });
+}
+
 export function isFireFox(): boolean {
     return /firefox|Firefox/.test(navigator.userAgent);
 }

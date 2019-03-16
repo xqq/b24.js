@@ -1,6 +1,6 @@
 import { AribSubtitle, AribSubtitleRegion } from './arib-subtitle';
 import { StyleManager } from './style-manager';
-import { isFireFox, isSafari } from './utils';
+import { escapeHTML, isFireFox, isSafari } from './utils';
 
 export default class VTTScreen {
 
@@ -78,35 +78,46 @@ export default class VTTScreen {
             this._guessDuration = Math.round(text.length / 3) * 1000;
         }
 
-        let CueClass = (window as any).VTTCue || (window as any).TextTrackCue;
-
-        let line = 9;
-        if (isFireFox()) {
-            line = 10;
-        } else if (isSafari()) {
-            line = 11;
-        }
-
         let orderedRegions = this.rearrangeRegions(subtitle);
 
-        for (let regionLine of orderedRegions) {
-            let cueText = '';
+        if ((window as any).VTTCue) {
+            // For modern browsers with VTTCue support
+            let line = -5 + orderedRegions.length;
+            // bottom-up
+            for (let regionLine of orderedRegions.reverse()) {
+                let cueText = '';
 
-            for (let region of regionLine) {
-                // merge regions on a same line into single cue with color tag
-                let colorTag = styleManager.applyColor(region.fontColor);
-                cueText += `<${colorTag}>${region.text}</v>`;
+                for (let region of regionLine) {
+                    // merge regions on a same line into single cue with color tag
+                    let colorTag = styleManager.applyColor(region.fontColor);
+                    cueText += `<${colorTag}>${escapeHTML(region.text)}</v>`;
+                }
+
+                let cue = new VTTCue(this.startTime / 1000, this.endTime / 1000, cueText);
+
+                cue.id = id;
+                cue.snapToLines = true;
+                cue.lineAlign = 'start';
+                cue.line = line--;
+                cue.positionAlign = 'center';
+
+                this._cues.push(cue);
             }
+        } else if ((window as any).TextTrackCue) {
+            // For brwser which doesn't support VTTCue, e.g. Microsoft Edge
+            for (let regionLine of orderedRegions) {
+                let cueText = '';
 
-            let cue = new CueClass(this.startTime / 1000, this.endTime / 1000, cueText) as VTTCue;
+                for (let region of regionLine) {
+                    cueText += region.text;
+                }
 
-            cue.id = id;
-            cue.snapToLines = true;
-            cue.lineAlign = 'start';
-            cue.line = line++;
-            cue.positionAlign = 'center';
+                let cue = new TextTrackCue(this.startTime / 1000, this.endTime / 1000, escapeHTML(cueText)) as VTTCue;
 
-            this._cues.push(cue);
+                cue.id = id;
+
+                this._cues.push(cue);
+            }
         }
 
         return this._cues;
