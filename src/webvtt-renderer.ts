@@ -2,6 +2,7 @@ import B24Decoder from './b24-decoder';
 import VTTScreen from './vtt-screen';
 import { AribSubtitle } from './arib-subtitle';
 import { StyleManager } from './style-manager';
+import { isEdge, isMSIE } from './utils';
 import { InitializeEvent, isInitialized } from './cmodule-initializer';
 
 export default class WebVTTRenderer {
@@ -92,6 +93,20 @@ export default class WebVTTRenderer {
         }
     }
 
+    private removeCuesAfter(time: number): void {
+        let second = time / 1000;
+        let track = this.track;
+
+        if (track && track.cues) {
+            let cues = track.cues;
+            for (let i = cues.length - 1; i >= 0; i--) {
+                if (cues[i].startTime >= second) {
+                    track.removeCue(cues[i]);
+                }
+            }
+        }
+    }
+
     private cleanupScreens(): void {
         for (let screen of this.screens) {
             screen.dispose();
@@ -132,6 +147,12 @@ export default class WebVTTRenderer {
         let prevScreen = null;
         if (this.screens.length > 0) {
             prevScreen = this.screens[this.screens.length - 1];
+        }
+
+        if (prevScreen && (isEdge() || isMSIE()) && subtitle.pts < prevScreen.startTime) {
+            // For Microsoft Edge, TextTrack.addCue only accepts cues that in time order
+            // Drop exisiting cues after new cue before appending
+            this.removeCuesAfter(subtitle.pts);
         }
 
         if (prevScreen && prevScreen.isAlive(subtitle.pts)) {

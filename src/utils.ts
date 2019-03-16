@@ -45,3 +45,11 @@ export function isChrome(): boolean {
 export function isSafari(): boolean {
     return /safari|Safari/.test(navigator.userAgent) && !isChrome();
 }
+
+export function isEdge(): boolean {
+    return /Edge|edge/.test(navigator.userAgent);
+}
+
+export function isMSIE(): boolean {
+    return /msie|MSIE/.test(navigator.userAgent) || /Trident/.test(navigator.userAgent);
+}
