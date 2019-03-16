@@ -5,16 +5,29 @@ import { StyleManager } from './style-manager';
 import { isEdge, isMSIE } from './utils';
 import { InitializeEvent, isInitialized } from './cmodule-initializer';
 
+interface DecoderMap {
+    [pid: number]: B24Decoder;
+}
+
+interface TrackMap {
+    subtitle: TextTrack;
+    emptyPlaceholder: TextTrack;
+}
+
 export default class WebVTTRenderer {
 
-    private decoders: Record<number, B24Decoder>;
+    private decoders: DecoderMap;
     private media: HTMLMediaElement;
-    private track: TextTrack;
+    private tracks: TrackMap;
     private screens: VTTScreen[];
     private styleManager: StyleManager;
 
     public constructor() {
         this.decoders = {};
+        this.tracks = {
+            subtitle: undefined,
+            emptyPlaceholder: undefined
+        };
         this.screens = [];
         this.styleManager = new StyleManager();
     }
@@ -48,44 +61,59 @@ export default class WebVTTRenderer {
 
     public attachMedia(media: HTMLMediaElement): void {
         this.media = media;
-
-        let track = this.findExistingTrack();
-        if (track === null) {
-            track = this.createTextTrack();
-        }
-
-        this.track = track;
+        this.setupTracks();
         this.styleManager.init();
     }
 
     public detachMedia(): void {
-        this.cleanupTrack();
         this.cleanupScreens();
         this.styleManager.dispose();
-        // There is no way to destroy a TextTrack, unless destroy the HTMLMediaElement
-        this.track = null;
+        this.cleanupTracks();
         this.media = null;
     }
 
-    private findExistingTrack(): TextTrack {
+    private setupTracks(): void {
+        let subtitleTrack = this.findExistingTrack('subtitle');
+        if (subtitleTrack === null) {
+            subtitleTrack = this.createTextTrack('subtitle', 'ARIB B24 Japanese');
+        }
+
+        let placeholderTrack = this.findExistingTrack('emptyPlaceholder');
+        if (placeholderTrack === null) {
+            placeholderTrack = this.createTextTrack('emptyPlaceholder', 'ARIB B24 Off');
+        }
+
+        this.tracks.subtitle = subtitleTrack;
+        this.tracks.emptyPlaceholder = placeholderTrack;
+    }
+
+    private cleanupTracks(): void {
+        // There is no way to destroy a TextTrack, unless destroy the HTMLMediaElement
+        let tracks = this.tracks;
+        this.cleanupTrack(tracks.subtitle);
+        tracks.subtitle = undefined;
+        tracks.emptyPlaceholder = undefined;
+    }
+
+    private findExistingTrack(type: string): TextTrack {
         let media = this.media;
         for (let i = 0; i < media.textTracks.length; i++) {
             let track = media.textTracks[i];
-            if ((track as any).b24js === true) {
+            if ((track as any).b24js === true && (track as any).b24jsType === type) {
                 return track;
             }
         }
         return null;
     }
 
-    private createTextTrack(): TextTrack {
-        let track = this.media.addTextTrack('subtitles', 'ARIB B24 Japanese', 'ja');
+    private createTextTrack(type: string, description: string): TextTrack {
+        let track = this.media.addTextTrack('subtitles', description, 'ja');
         (track as any).b24js = true;  // add a mark as managed by b24.js
+        (track as any).b24jsType = type;
         return track;
     }
 
-    private cleanupTrack(): void {
-        let track = this.track;
+    private cleanupTrack(track: TextTrack): void {
         if (track && track.cues) {
             let cues = track.cues;
 
@@ -97,7 +125,7 @@ export default class WebVTTRenderer {
 
     private removeCuesAfter(time: number): void {
         let second = time / 1000;
-        let track = this.track;
+        let track = this.tracks.subtitle;
 
         if (track && track.cues) {
             let cues = track.cues;
@@ -117,11 +145,13 @@ export default class WebVTTRenderer {
     }
 
     public show(): void {
-        this.track.mode = 'showing';
+        this.tracks.emptyPlaceholder.mode = 'hidden';
+        this.tracks.subtitle.mode = 'showing';
     }
 
     public hide(): void {
-        this.track.mode = 'hidden';
+        this.tracks.subtitle.mode = 'hidden';
+        this.tracks.emptyPlaceholder.mode = 'showing';
     }
 
     public pushData(pid: number, uint8array: Uint8Array, pts: number): void {
@@ -135,13 +165,13 @@ export default class WebVTTRenderer {
             return;
         }
 
-        if (this.track.mode === 'disabled') {
+        if (this.tracks.subtitle.mode === 'disabled') {
             // otherwise track.cues will be null
-            this.track.mode = 'hidden';
+            this.tracks.subtitle.mode = 'hidden';
         }
 
         let id = subtitle.hashCode().toString();
-        if (this.track.cues.getCueById(id) != null) {
+        if (this.tracks.subtitle.cues.getCueById(id) != null) {
             // duplicated subtitle, discard it
             return;
         }
@@ -171,7 +201,7 @@ export default class WebVTTRenderer {
         let cues: VTTCue[] = screen.render(this.styleManager);
 
         for (let cue of cues) {
-            this.track.addCue(cue);
+            this.tracks.subtitle.addCue(cue);
         }
         this.screens.push(screen);
     }
