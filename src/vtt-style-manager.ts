@@ -1,4 +1,4 @@
-export class StyleManager {
+export class VTTStyleManager {
 
     private style: HTMLStyleElement;
     private cueStyle: Text;

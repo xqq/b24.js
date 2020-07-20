@@ -1,5 +1,5 @@
 import { AribSubtitle, AribSubtitleRegion } from './arib-subtitle';
-import { StyleManager } from './style-manager';
+import { VTTStyleManager } from './vtt-style-manager';
 import { escapeHTML, isFireFox, isSafari } from './utils';
 
 export default class VTTScreen {
@@ -68,7 +68,7 @@ export default class VTTScreen {
         return this._cues;
     }
 
-    public render(styleManager: StyleManager): VTTCue[] {
+    public render(styleManager: VTTStyleManager): VTTCue[] {
         let subtitle = this.subtitle;
         let text = subtitle.rubylessText();  // Remove Furiganas
         let id = subtitle.hashCode().toString();

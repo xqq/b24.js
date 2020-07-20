@@ -1,7 +1,7 @@
 import B24Decoder from './b24-decoder';
 import VTTScreen from './vtt-screen';
 import { AribSubtitle } from './arib-subtitle';
-import { StyleManager } from './style-manager';
+import { VTTStyleManager } from './vtt-style-manager';
 import { isEdge, isMSIE } from './utils';
 import { InitializeEvent, isInitialized } from './cmodule-initializer';
 
@@ -20,7 +20,7 @@ export default class WebVTTRenderer {
     private media: HTMLMediaElement;
     private tracks: TrackMap;
     private screens: VTTScreen[];
-    private styleManager: StyleManager;
+    private styleManager: VTTStyleManager;
 
     public constructor() {
         this.decoders = {};
@@ -29,7 +29,7 @@ export default class WebVTTRenderer {
             emptyPlaceholder: undefined
         };
         this.screens = [];
-        this.styleManager = new StyleManager();
+        this.styleManager = new VTTStyleManager();
     }
 
     public async init(): Promise<void> {
