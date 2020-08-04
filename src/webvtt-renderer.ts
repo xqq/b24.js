@@ -3,7 +3,7 @@ import VTTScreen from './vtt-screen';
 import { AribSubtitle } from './arib-subtitle';
 import { VTTStyleManager } from './vtt-style-manager';
 import { isEdge, isMSIE } from './utils';
-import { InitializeEvent, isInitialized } from './cmodule-initializer';
+import { CModuleProxy, InitializeEvent, isInitialized } from './cmodule-proxy';
 
 interface DecoderMap {
     [pid: number]: B24Decoder;
@@ -36,12 +36,7 @@ export default class WebVTTRenderer {
         if (isInitialized) {
             return;
         }
-
-        return new Promise<void>(resolve => {
-            InitializeEvent.once(() => {
-                resolve();
-            });
-        });
+        await CModuleProxy.init();
     }
 
     public dispose(): void {
