@@ -2,6 +2,10 @@ b24.js  [![npm](https://img.shields.io/npm/v/b24.js.svg?style=flat)](https://www
 ======
 An HTML5 subtitle renderer for ARIB STD-B24 data packet, which is transmitted over the Digital TV Broadcasting in Japan.
 
+**Another alternative renderer [aribb24.js](https://github.com/monyone/aribb24.js) is recommended for ARIB STD-B24 rendering.**
+
+**This project will no longer update.**
+
 ## Features
 - Converting to WebVTT
 - Keeping original multiple caption lines 
